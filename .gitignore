@@ -1,0 +1,17 @@
+# Node modules
+node_modules/
+deviceshop-server/
+
+# SQLite database
+data/*.sqlite
+data/*.sqlite-journal
+*.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# System files
+.DS_Store
+Thumbs.db
