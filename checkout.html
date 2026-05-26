@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeviceShop — Оформление заказа</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0a0a0f;
+      color: #fff;
+    }
+    :root { --primary: #7c5cff; --secondary: #00d4ff; --danger: #ff6b81; --card: rgba(18,18,24,0.92); --border: rgba(255,255,255,0.08); --radius: 20px; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      border: none;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; width: 100%; }
+    .glass { background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: var(--radius); }
+    header {
+      background: rgba(10,10,15,0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; flex-wrap: wrap; gap: 20px; }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 800; }
+    .logo-mark { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .nav-links { display: flex; gap: 28px; color: #b0b0b8; }
+    .cart-button { position: relative; }
+    .cart-count { position: absolute; top: -8px; right: -8px; background: var(--danger); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 30px; }
+    .section { padding: 60px 0; }
+    .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    input, select, textarea { width: 100%; padding: 14px; background: #1a1a24; border: 1px solid var(--border); border-radius: 14px; color: #fff; margin-bottom: 16px; }
+    .summary-item { display: flex; gap: 16px; padding: 12px; border-bottom: 1px solid var(--border); }
+    .summary-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 12px; }
+    @media (max-width: 768px) { .checkout-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><span class="logo-mark">⌨</span><span>DeviceShop</span></a>
+    <div class="nav-links"><a href="index.html">Главная</a><a href="catalog.html">Каталог</a><a href="cart.html">Корзина</a></div>
+    <a href="cart.html" class="btn btn-primary cart-button">Корзина <span class="cart-count" id="cartCount">0</span></a>
+  </div>
+</header>
+
+<main class="section">
+  <div class="container">
+    <h2 style="font-size: 36px; margin-bottom: 16px;">Оформление заказа</h2>
+    <div style="display: grid; grid-template-columns: 1fr 360px; gap: 32px;">
+      <div class="glass" style="padding: 32px;">
+        <h3>Контактные данные</h3>
+        <div class="checkout-grid">
+          <input type="text" placeholder="Имя" id="name">
+          <input type="tel" placeholder="Телефон" id="phone">
+          <input type="email" placeholder="Email" id="email">
+          <input type="text" placeholder="Город" id="city">
+        </div>
+        <textarea rows="3" placeholder="Адрес доставки" id="address"></textarea>
+        <div class="checkout-grid">
+          <select id="delivery"><option>Курьер</option><option>Самовывоз</option><option>Пункт выдачи</option></select>
+          <select id="payment"><option>Картой онлайн</option><option>При получении</option></select>
+        </div>
+        <button class="btn btn-primary" style="margin-top: 16px;" onclick="submitOrder()">Подтвердить заказ</button>
+      </div>
+      <div class="glass" style="padding: 24px; height: fit-content;">
+        <h3>Ваш заказ</h3>
+        <div id="orderSummary"></div>
+        <hr style="margin: 16px 0; border-color: var(--border)">
+        <div style="display: flex; justify-content: space-between;"><span>Товары</span><strong id="itemsTotal">0 ₽</strong></div>
+        <div style="display: flex; justify-content: space-between; margin: 12px 0;"><span>Доставка</span><strong id="deliveryCost">490 ₽</strong></div>
+        <div style="display: flex; justify-content: space-between; font-size: 20px; font-weight: 700;"><span>Итого</span><strong id="grandTotal">0 ₽</strong></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="products.js"></script>
+<script>
+  function formatPrice(p) { return p.toLocaleString('ru-RU') + ' ₽'; }
+  function updateCartBadge() { document.getElementById('cartCount').textContent = getCartCount(); }
+  function renderCheckout() {
+    const cart = getCart();
+    const container = document.getElementById('orderSummary');
+    if (!cart.length) { container.innerHTML = '<p style="padding:16px;text-align:center">Корзина пуста</p>'; document.getElementById('itemsTotal').innerText = '0 ₽'; document.getElementById('deliveryCost').innerText = '0 ₽'; document.getElementById('grandTotal').innerText = '0 ₽'; return; }
+    container.innerHTML = cart.map(item => `<div class="summary-item"><img src="${getCartItemImage(item)}" alt="${item.name}"><div><strong>${item.name}</strong><br>${getColorLabel(item.color)}<br>${item.quantity} шт × ${formatPrice(item.price)}</div></div>`).join('');
+    const subtotal = cart.reduce((s,i)=> s + i.price * i.quantity, 0);
+    const delivery = subtotal > 0 ? 490 : 0;
+    document.getElementById('itemsTotal').innerText = formatPrice(subtotal);
+    document.getElementById('deliveryCost').innerText = formatPrice(delivery);
+    document.getElementById('grandTotal').innerText = formatPrice(subtotal + delivery);
+  }
+  window.submitOrder = () => {
+    const cart = getCart();
+    if (!cart.length) { alert('Корзина пуста'); return; }
+    if (!document.getElementById('name').value || !document.getElementById('phone').value) { alert('Заполните имя и телефон'); return; }
+    alert('Спасибо за заказ! Наш менеджер свяжется с вами.');
+    localStorage.removeItem('deviceshop-cart');
+    window.location.href = 'index.html';
+  };
+  updateCartBadge();
+  renderCheckout();
+</script>
+</body>
+</html> 

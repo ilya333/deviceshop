@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeviceShop — Мои заказы</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    ::-webkit-scrollbar { width: 12px; height: 12px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #d4a574, #c0c5c8); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #c49464, #b0b5b8); }
+    * { scrollbar-width: auto; scrollbar-color: #d4a574 rgba(0, 0, 0, 0.2); }
+    
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('img/ФОН.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #fff;
+      line-height: 1.5;
+    }
+    
+    :root {
+      --primary: #d4a574;
+      --secondary: #c0c5c8;
+      --danger: #e8a090;
+      --success: #4ade80;
+      --warning: #fbbf24;
+      --card: rgba(30, 28, 25, 0.85);
+      --border: rgba(255,255,255,0.1);
+      --radius: 20px;
+      --shadow: 0 20px 35px -12px rgba(0,0,0,0.3);
+    }
+    
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    a { text-decoration: none; color: inherit; }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: none;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #1a1a1a; }
+    .btn-outline { background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; }
+    .btn-outline:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(20, 18, 16, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 800;
+    }
+    .logo span:first-child {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .logo span:first-child img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .logo span:last-child {
+      background: linear-gradient(135deg, #fff, #d4a574);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      color: #d0cdc8;
+      transition: 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+    .cart-button {
+      position: relative;
+    }
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--danger);
+      color: #1a1a1a;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 30px;
+    }
+    
+    .user-menu {
+      position: relative;
+      display: inline-block;
+    }
+    .user-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid var(--border);
+      color: #d0cdc8;
+      padding: 12px 24px;
+      border-radius: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .user-btn:hover {
+      background: rgba(212,165,116,0.2);
+      color: var(--primary);
+    }
+    .user-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(30, 28, 25, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.2s;
+      z-index: 100;
+    }
+    .user-menu:hover .user-dropdown {
+      opacity: 1;
+      visibility: visible;
+    }
+    .user-dropdown a {
+      display: block;
+      padding: 12px 20px;
+      color: #d0cdc8;
+    }
+    .user-dropdown a:hover {
+      background: rgba(212,165,116,0.15);
+      color: var(--primary);
+    }
+    .user-dropdown hr {
+      margin: 0;
+      border-color: var(--border);
+    }
+    
+    .auth-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid var(--border);
+      color: #d0cdc8;
+    }
+    
+    .section { padding: 60px 0; }
+    .section-title { font-size: 32px; margin-bottom: 8px; }
+    .section-subtitle { color: #d0cdc8; margin-bottom: 32px; }
+    
+    .order-card {
+      padding: 24px;
+      margin-bottom: 20px;
+      transition: transform 0.2s;
+    }
+    .order-card:hover {
+      transform: translateY(-2px);
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .order-id {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--primary);
+    }
+    .order-status {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .status-new { background: rgba(251,191,36,0.2); color: var(--warning); border: 1px solid var(--warning); }
+    .status-paid { background: rgba(74,222,128,0.2); color: var(--success); border: 1px solid var(--success); }
+    .status-shipped { background: rgba(212,165,116,0.2); color: var(--primary); border: 1px solid var(--primary); }
+    .status-delivered { background: rgba(74,222,128,0.2); color: var(--success); border: 1px solid var(--success); }
+    .status-cancelled { background: rgba(232,160,144,0.2); color: var(--danger); border: 1px solid var(--danger); }
+    
+    .order-date {
+      color: #d0cdc8;
+      font-size: 14px;
+    }
+    .order-items {
+      margin: 16px 0;
+    }
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .order-item:last-child {
+      border-bottom: none;
+    }
+    .item-name {
+      flex: 2;
+    }
+    .item-quantity {
+      flex: 1;
+      text-align: center;
+    }
+    .item-price {
+      flex: 1;
+      text-align: right;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .order-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      margin-top: 16px;
+    }
+    .order-total {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .empty-orders {
+      text-align: center;
+      padding: 60px 40px;
+    }
+    .empty-orders p {
+      margin-bottom: 24px;
+      color: #d0cdc8;
+    }
+    
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      margin-top: 40px;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      color: #d0cdc8;
+      font-size: 14px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    
+    @media (max-width: 768px) {
+      .nav {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .order-item {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+      .item-quantity, .item-price {
+        text-align: center;
+      }
+      .order-footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo">
+      <span><img src="img/ыыччч.jpg" alt="DeviceShop"></span>
+      <span>DeviceShop</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Главная</a>
+      <a href="catalog.html">Каталог</a>
+      <a href="switches.html">Моддинг</a>
+      <a href="3d-viewer.html">3D модель</a>
+      <a href="index.html#contacts">Контакты</a>
+      
+      <div class="user-menu" id="userMenu" style="display: none;">
+        <button class="user-btn" id="userBtn">
+          <span>👤</span> <span id="userName">Профиль</span> <span>▼</span>
+        </button>
+        <div class="user-dropdown">
+          <a href="profile.html">📋 Мой профиль</a>
+          <a href="orders.html" style="color: var(--primary);">📦 Мои заказы</a>
+          <hr>
+          <a href="#" id="logoutBtn">🚪 Выйти</a>
+        </div>
+      </div>
+      
+      <a href="#" class="btn auth-btn" id="openAuthBtn">Вход / Регистрация</a>
+    </div>
+    <a href="cart.html" class="btn btn-primary cart-button">
+      Корзина <span class="cart-count" id="cartCount">0</span>
+    </a>
+  </div>
+</header>
+
+<main class="section">
+  <div class="container">
+    <h2 class="section-title">📦 Мои заказы</h2>
+    <p class="section-subtitle">История ваших покупок</p>
+    
+    <div id="ordersContent">
+      <div class="glass" style="text-align: center; padding: 40px;">
+        <p>Загрузка...</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <p>© 2026 DeviceShop — магазин периферии для настоящих геймеров</p>
+    <p>Все права защищены</p>
+  </div>
+</footer>
+
+<script>
+const API_URL = 'api.php';
+
+// ==================== КОРЗИНА ====================
+async function getCartFromDB() {
+  const response = await fetch(`${API_URL}?action=get_cart`);
+  return await response.json();
+}
+
+async function getCartCount() {
+  const cart = await getCartFromDB();
+  return cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+}
+
+async function updateCartBadge() {
+  const badge = document.getElementById('cartCount');
+  if (badge) badge.textContent = await getCartCount();
+}
+
+// ==================== АВТОРИЗАЦИЯ ====================
+const openAuthBtn = document.getElementById('openAuthBtn');
+const userMenu = document.getElementById('userMenu');
+const userNameSpan = document.getElementById('userName');
+
+async function checkAuth() {
+  const response = await fetch(`${API_URL}?action=check_auth`);
+  const result = await response.json();
+  
+  if (result.authenticated) {
+    if (openAuthBtn) openAuthBtn.style.display = 'none';
+    if (userMenu) {
+      userMenu.style.display = 'inline-block';
+      if (userNameSpan) userNameSpan.textContent = result.user.name;
+    }
+    return true;
+  } else {
+    if (openAuthBtn) openAuthBtn.style.display = 'inline-flex';
+    if (userMenu) userMenu.style.display = 'none';
+    window.location.href = 'index.html';
+    return false;
+  }
+}
+
+document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
+  e.preventDefault();
+  await fetch(`${API_URL}?action=logout`);
+  window.location.href = 'index.html';
+});
+
+// ==================== ЗАКАЗЫ ====================
+function formatPrice(p) { return p.toLocaleString('ru-RU') + ' ₽'; }
+function escapeHtml(text) { if (!text) return ''; return String(text).replace(/[&<>]/g, function(m) { return m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'); }); }
+
+function getStatusText(status) {
+  const statuses = {
+    'new': '🆕 Новый',
+    'paid': '✅ Оплачен',
+    'shipped': '🚚 Отправлен',
+    'delivered': '📦 Доставлен',
+    'cancelled': '❌ Отменён'
+  };
+  return statuses[status] || status;
+}
+
+function getStatusClass(status) {
+  const classes = {
+    'new': 'status-new',
+    'paid': 'status-paid',
+    'shipped': 'status-shipped',
+    'delivered': 'status-delivered',
+    'cancelled': 'status-cancelled'
+  };
+  return classes[status] || 'status-new';
+}
+
+async function loadOrders() {
+  const isAuth = await checkAuth();
+  if (!isAuth) return;
+  
+  const container = document.getElementById('ordersContent');
+  
+  try {
+    const response = await fetch(`${API_URL}?action=get_orders`);
+    const orders = await response.json();
+    
+    if (!orders.length) {
+      container.innerHTML = `
+        <div class="glass empty-orders">
+          <p>😕 У вас пока нет заказов</p>
+          <a href="catalog.html" class="btn btn-primary">Перейти в каталог</a>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = orders.map(order => `
+      <div class="order-card glass">
+        <div class="order-header">
+          <div>
+            <span class="order-id">Заказ №${order.id}</span>
+            <div class="order-date">${new Date(order.created_at).toLocaleDateString('ru-RU')} в ${new Date(order.created_at).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'})}</div>
+          </div>
+          <div>
+            <span class="order-status ${getStatusClass(order.status)}">${getStatusText(order.status)}</span>
+          </div>
+        </div>
+        
+        <div class="order-items">
+          ${order.items ? order.items.map(item => `
+            <div class="order-item">
+              <span class="item-name">${escapeHtml(item.product_name || 'Товар')}</span>
+              <span class="item-quantity">${item.quantity} шт</span>
+              <span class="item-price">${formatPrice(item.price_at_time || item.price)}</span>
+            </div>
+          `).join('') : '<div class="order-item"><span>Товары не загружены</span></div>'}
+        </div>
+        
+        <div class="order-footer">
+          <div>
+            <span style="color: #d0cdc8;">Доставка:</span> ${order.delivery_method || 'Курьер'} | ${order.payment_method || 'При получении'}
+          </div>
+          <div class="order-total">
+            Итого: ${formatPrice(order.total_price)}
+          </div>
+        </div>
+      </div>
+    `).join('');
+    
+  } catch (error) {
+    console.error('Ошибка загрузки заказов:', error);
+    container.innerHTML = `
+      <div class="glass empty-orders">
+        <p>⚠️ Ошибка загрузки заказов</p>
+        <button class="btn btn-outline" onclick="location.reload()">Повторить</button>
+      </div>
+    `;
+  }
+}
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadOrders();
+  await updateCartBadge();
+});
+</script>
+</body>
+</html>

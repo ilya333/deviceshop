@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeviceShop — Мой профиль</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    ::-webkit-scrollbar { width: 12px; height: 12px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #d4a574, #c0c5c8); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #c49464, #b0b5b8); }
+    * { scrollbar-width: auto; scrollbar-color: #d4a574 rgba(0, 0, 0, 0.2); }
+    
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('img/ФОН.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #fff;
+      line-height: 1.5;
+    }
+    
+    :root {
+      --primary: #d4a574;
+      --secondary: #c0c5c8;
+      --danger: #e8a090;
+      --success: #4ade80;
+      --card: rgba(30, 28, 25, 0.85);
+      --border: rgba(255,255,255,0.1);
+      --radius: 20px;
+      --shadow: 0 20px 35px -12px rgba(0,0,0,0.3);
+    }
+    
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+    a { text-decoration: none; color: inherit; }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: none;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #1a1a1a; box-shadow: 0 4px 14px rgba(212,165,116,0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(212,165,116,0.4); }
+    .btn-outline { background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; }
+    .btn-outline:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    .btn-danger { background: rgba(232,160,144,0.2); border: 1px solid var(--danger); color: var(--danger); }
+    .btn-danger:hover { background: rgba(232,160,144,0.4); transform: translateY(-2px); }
+    
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(20, 18, 16, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 800;
+    }
+    .logo span:first-child {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .logo span:first-child img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .logo span:last-child {
+      background: linear-gradient(135deg, #fff, #d4a574);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      color: #d0cdc8;
+      transition: 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+    .cart-button {
+      position: relative;
+    }
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--danger);
+      color: #1a1a1a;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 30px;
+      min-width: 20px;
+      text-align: center;
+    }
+    
+    .user-menu {
+      position: relative;
+      display: inline-block;
+    }
+    .user-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid var(--border);
+      color: #d0cdc8;
+      padding: 12px 24px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .user-btn:hover {
+      background: rgba(212,165,116,0.2);
+      color: var(--primary);
+    }
+    .user-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: rgba(30, 28, 25, 0.95);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      min-width: 200px;
+      margin-top: 8px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.2s ease;
+      z-index: 100;
+    }
+    .user-menu:hover .user-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .user-dropdown a {
+      display: block;
+      padding: 12px 20px;
+      color: #d0cdc8;
+      transition: 0.2s;
+    }
+    .user-dropdown a:hover {
+      background: rgba(212,165,116,0.15);
+      color: var(--primary);
+    }
+    .user-dropdown hr {
+      margin: 0;
+      border-color: var(--border);
+    }
+    
+    .auth-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid var(--border);
+      color: #d0cdc8;
+      transition: 0.2s;
+    }
+    .auth-btn:hover {
+      background: rgba(255,255,255,0.2);
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+    
+    .section { padding: 60px 0; }
+    .section-title { font-size: 32px; margin-bottom: 8px; }
+    .section-subtitle { color: #d0cdc8; margin-bottom: 32px; }
+    
+    .profile-card { padding: 32px; }
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      margin-bottom: 24px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .info-label {
+      color: #d0cdc8;
+      font-weight: 500;
+      min-width: 120px;
+    }
+    .info-value {
+      font-weight: 600;
+      color: #fff;
+    }
+    .edit-form {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .edit-form input {
+      width: 100%;
+      padding: 14px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .edit-form input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #d0cdc8;
+      font-size: 14px;
+    }
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      margin-top: 40px;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      color: #d0cdc8;
+      font-size: 14px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    
+    @media (max-width: 768px) {
+      .nav {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .info-row {
+        flex-direction: column;
+      }
+      .button-group {
+        flex-direction: column;
+      }
+      .button-group .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo">
+      <span><img src="img/ыыччч.jpg" alt="DeviceShop"></span>
+      <span>DeviceShop</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Главная</a>
+      <a href="catalog.html">Каталог</a>
+      <a href="switches.html">Моддинг</a>
+      <a href="3d-viewer.html">3D модель</a>
+      <a href="index.html#contacts">Контакты</a>
+      
+      <div class="user-menu" id="userMenu" style="display: none;">
+        <button class="user-btn" id="userBtn">
+          <span>👤</span> <span id="userName">Профиль</span> <span>▼</span>
+        </button>
+        <div class="user-dropdown">
+          <a href="profile.html" style="color: var(--primary);">📋 Мой профиль</a>
+          <a href="orders.html">📦 Мои заказы</a>
+          <hr>
+          <a href="#" id="logoutBtn">🚪 Выйти</a>
+        </div>
+      </div>
+      
+      <a href="#" class="btn auth-btn" id="openAuthBtn">Вход / Регистрация</a>
+    </div>
+    <a href="cart.html" class="btn btn-primary cart-button">
+      Корзина <span class="cart-count" id="cartCount">0</span>
+    </a>
+  </div>
+</header>
+
+<main class="section">
+  <div class="container">
+    <h2 class="section-title">👤 Мой профиль</h2>
+    <p class="section-subtitle">Управление личными данными</p>
+    
+    <div class="profile-card glass" id="profileContent">
+      <div style="text-align: center; padding: 40px;">
+        <div class="loader"></div>
+        <p>Загрузка...</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <p>© 2026 DeviceShop — магазин периферии для настоящих геймеров</p>
+    <p>Все права защищены</p>
+  </div>
+</footer>
+
+<script>
+const API_URL = 'api.php';
+
+// ==================== КОРЗИНА ====================
+async function getCartFromDB() {
+  const response = await fetch(`${API_URL}?action=get_cart`);
+  return await response.json();
+}
+
+async function getCartCount() {
+  const cart = await getCartFromDB();
+  return cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+}
+
+async function updateCartBadge() {
+  const badge = document.getElementById('cartCount');
+  if (badge) badge.textContent = await getCartCount();
+}
+
+// ==================== АВТОРИЗАЦИЯ ====================
+const openAuthBtn = document.getElementById('openAuthBtn');
+const userMenu = document.getElementById('userMenu');
+const userNameSpan = document.getElementById('userName');
+let currentUser = null;
+
+async function checkAuth() {
+  const response = await fetch(`${API_URL}?action=check_auth`);
+  const result = await response.json();
+  
+  if (result.authenticated) {
+    currentUser = result.user;
+    if (openAuthBtn) openAuthBtn.style.display = 'none';
+    if (userMenu) {
+      userMenu.style.display = 'inline-block';
+      if (userNameSpan) userNameSpan.textContent = result.user.name;
+    }
+    return true;
+  } else {
+    if (openAuthBtn) openAuthBtn.style.display = 'inline-flex';
+    if (userMenu) userMenu.style.display = 'none';
+    window.location.href = 'index.html';
+    return false;
+  }
+}
+
+document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
+  e.preventDefault();
+  await fetch(`${API_URL}?action=logout`);
+  window.location.href = 'index.html';
+});
+
+// ==================== ПРОФИЛЬ ====================
+async function loadProfile() {
+  const isAuth = await checkAuth();
+  if (!isAuth) return;
+  
+  const container = document.getElementById('profileContent');
+  
+  // Получаем полные данные пользователя из БД
+  const response = await fetch(`${API_URL}?action=get_user`);
+  let userData = currentUser;
+  
+  if (response.ok) {
+    const data = await response.json();
+    if (data.id) userData = data;
+  }
+  
+  container.innerHTML = `
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div class="profile-avatar">
+        👤
+      </div>
+      <h3 style="font-size: 24px; margin-bottom: 8px;">${escapeHtml(userData.name || 'Пользователь')}</h3>
+      <p style="color: var(--primary); margin-bottom: 24px;">${escapeHtml(userData.email || '')}</p>
+    </div>
+    
+    <div class="info-row">
+      <span class="info-label">🆔 ID пользователя:</span>
+      <span class="info-value">${userData.id || '—'}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">📧 Email:</span>
+      <span class="info-value">${escapeHtml(userData.email || '—')}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">👤 Имя:</span>
+      <span class="info-value" id="displayName">${escapeHtml(userData.name || '—')}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">📅 Дата регистрации:</span>
+      <span class="info-value">${userData.created_at ? new Date(userData.created_at).toLocaleDateString('ru-RU') : '—'}</span>
+    </div>
+    
+    <div class="edit-form" id="editForm" style="display: none;">
+      <h4 style="margin-bottom: 16px;">✏️ Редактировать профиль</h4>
+      <div class="form-group">
+        <label>Имя</label>
+        <input type="text" id="editName" value="${escapeHtml(userData.name || '')}" placeholder="Ваше имя">
+      </div>
+      <div class="form-group">
+        <label>Телефон</label>
+        <input type="tel" id="editPhone" value="${escapeHtml(userData.phone || '')}" placeholder="+7 (XXX) XXX-XX-XX">
+      </div>
+      <div class="form-group">
+        <label>Адрес доставки</label>
+        <input type="text" id="editAddress" value="${escapeHtml(userData.address || '')}" placeholder="Город, улица, дом, квартира">
+      </div>
+      <div class="button-group">
+        <button class="btn btn-primary" onclick="saveProfile()">💾 Сохранить</button>
+        <button class="btn btn-outline" onclick="cancelEdit()">Отмена</button>
+      </div>
+    </div>
+    
+    <div class="button-group" style="margin-top: 24px;">
+      <button class="btn btn-outline" onclick="showEditForm()">✏️ Редактировать профиль</button>
+      <button class="btn btn-danger" onclick="changePassword()">🔑 Сменить пароль</button>
+    </div>
+  `;
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text).replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
+
+function showEditForm() {
+  document.getElementById('editForm').style.display = 'block';
+}
+
+function cancelEdit() {
+  document.getElementById('editForm').style.display = 'none';
+}
+
+async function saveProfile() {
+  const newName = document.getElementById('editName').value;
+  const newPhone = document.getElementById('editPhone').value;
+  const newAddress = document.getElementById('editAddress').value;
+  
+  if (!newName) {
+    alert('Имя не может быть пустым');
+    return;
+  }
+  
+  const response = await fetch(`${API_URL}?action=update_profile`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: newName, phone: newPhone, address: newAddress })
+  });
+  
+  const result = await response.json();
+  if (result.success) {
+    alert('Профиль обновлён!');
+    document.getElementById('displayName').innerText = newName;
+    if (userNameSpan) userNameSpan.textContent = newName;
+    cancelEdit();
+  } else {
+    alert('Ошибка: ' + (result.message || 'Не удалось обновить профиль'));
+  }
+}
+
+async function changePassword() {
+  const oldPassword = prompt('Введите текущий пароль:');
+  if (!oldPassword) return;
+  
+  const newPassword = prompt('Введите новый пароль (минимум 6 символов):');
+  if (!newPassword || newPassword.length < 6) {
+    alert('Пароль должен быть минимум 6 символов');
+    return;
+  }
+  
+  const confirmPassword = prompt('Подтвердите новый пароль:');
+  if (newPassword !== confirmPassword) {
+    alert('Пароли не совпадают');
+    return;
+  }
+  
+  const response = await fetch(`${API_URL}?action=change_password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ old_password: oldPassword, new_password: newPassword })
+  });
+  
+  const result = await response.json();
+  alert(result.message);
+}
+
+// Добавляем недостающие API в api.php нужно будет добавить
+// А пока сделаем заглушки для changePassword
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAuth();
+  await loadProfile();
+  await updateCartBadge();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>DeviceShop — Загрузка</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('img/ФОН.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Контейнер для анимации */
+    .splash-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('ФОН.jpg');
+      background-size: cover;
+      background-position: center;
+      animation: fadeOut 0.4s ease forwards 1.5s;
+      animation-delay: 1.5s;
+    }
+
+    /* Логотип и название */
+    .splash-content {
+      text-align: center;
+      animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    }
+
+    .splash-logo {
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 22px;
+      animation: rotateLogo 0.7s ease forwards;
+    }
+
+    .splash-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 22px;
+      box-shadow: 0 0 35px rgba(212,165,116,0.5);
+    }
+
+    .splash-title {
+      font-size: 44px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #d4a574, #c0c5c8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+      animation: titleGlow 0.8s ease infinite alternate;
+    }
+
+    .splash-subtitle {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #d0cdc8;
+      opacity: 0;
+      animation: fadeInSub 0.5s ease forwards 0.6s;
+    }
+
+    /* Анимации */
+    @keyframes scaleIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes rotateLogo {
+      0% {
+        opacity: 0;
+        transform: rotate(0deg) scale(0.3);
+      }
+      50% {
+        opacity: 0.7;
+        transform: rotate(180deg) scale(1.1);
+      }
+      100% {
+        opacity: 1;
+        transform: rotate(360deg) scale(1);
+      }
+    }
+
+    @keyframes titleGlow {
+      0% {
+        text-shadow: 0 0 5px rgba(212,165,116,0.3);
+      }
+      100% {
+        text-shadow: 0 0 18px rgba(212,165,116,0.8);
+      }
+    }
+
+    @keyframes fadeInSub {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        visibility: visible;
+      }
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    /* Полоска загрузки */
+    .loading-bar {
+      width: 190px;
+      height: 3px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      margin: 28px auto 0;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeInSub 0.5s ease forwards 0.9s;
+    }
+
+    .loading-progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #d4a574, #c0c5c8);
+      border-radius: 3px;
+      animation: loadingProgress 1.3s ease forwards;
+    }
+
+    @keyframes loadingProgress {
+      0% {
+        width: 0%;
+      }
+      100% {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .splash-title {
+        font-size: 32px;
+      }
+      .splash-logo {
+        width: 90px;
+        height: 90px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="splash-container" id="splashContainer">
+    <div class="splash-content">
+      <div class="splash-logo">
+        <img src="img/ыыччч.jpg" alt="DeviceShop Logo" onerror="this.src='https://via.placeholder.com/110x110?text=DS'">
+      </div>
+      <div class="splash-title">DeviceShop</div>
+      <div class="splash-subtitle">Магазин периферии для настоящих геймеров</div>
+      <div class="loading-bar">
+        <div class="loading-progress"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Убираем заставку через 1.9 секунды и переходим на главную
+    (function() {
+      // Проверяем, была ли уже показана заставка в этой сессии
+      const hasSeenSplash = sessionStorage.getItem('splashShown');
+      
+      if (hasSeenSplash) {
+        // Если заставка уже была показана, сразу переходим на главную
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      // Помечаем, что заставка показана
+      sessionStorage.setItem('splashShown', 'true');
+      
+      // Ждем завершения анимации (1.9 секунды) и переходим на главную
+      setTimeout(function() {
+        const splash = document.getElementById('splashContainer');
+        if (splash) {
+          splash.style.animation = 'fadeOut 0.4s ease forwards';
+          setTimeout(function() {
+            window.location.href = 'index.html';
+          }, 400);
+        } else {
+          window.location.href = 'index.html';
+        }
+      }, 1900);
+    })();
+  </script>
+</body>
+</html>
